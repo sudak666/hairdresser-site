@@ -189,7 +189,13 @@ img{max-width:100%; display:block;}
   border-color:var(--accent-soft);
 }
 .team-photo{aspect-ratio:3/4; border-radius:calc(var(--radius) - 4px);}
-.team-text h3{margin-bottom:.15em;}
+.team-text h3{
+  font-family:'Playfair Display',serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:1.5rem;
+  margin-bottom:.2em;
+}
 .team-role{
   color:var(--accent);
   font-weight:700;
