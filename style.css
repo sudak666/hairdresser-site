@@ -114,11 +114,13 @@ img{max-width:100%; display:block;}
 }
 .hero-inner{max-width:760px; position:relative; z-index:1;}
 .lead{font-size:1.15rem; max-width:560px;}
-.hero-actions{display:flex; gap:16px; margin:32px 0 56px; flex-wrap:wrap;}
-.hero-stats{display:flex; gap:48px; flex-wrap:wrap;}
-.hero-stats div{display:flex; flex-direction:column;}
-.hero-stats strong{font-family:'Playfair Display',serif; font-size:1.8rem; font-style:italic; color:var(--accent);}
-.hero-stats span{font-size:.85rem; color:var(--muted);}
+.hero-actions{display:flex; gap:16px; margin:32px 0 24px; flex-wrap:wrap;}
+.hero-experience{
+  font-size:.85rem;
+  color:var(--muted);
+  font-weight:600;
+  letter-spacing:.02em;
+}
 
 /* Sections */
 .section{padding:88px 0;}
