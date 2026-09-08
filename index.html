@@ -5,11 +5,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Алла та Марина — Перукарі-стилісти</title>
 <meta name="description" content="Стрижки, фарбування, укладки. Два майстри, запис онлайн.">
+
+<!-- Favicon -->
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#b6603f">
+
+<!-- Open Graph / соцмережі -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Алла та Марина">
+<meta property="og:title" content="Алла та Марина — Перукарі-стилісти">
+<meta property="og:description" content="Стрижки, фарбування та укладки з увагою до деталей. Два майстри-стилісти, запис онлайн.">
+<meta property="og:image" content="https://sudak666.github.io/hairdresser-site/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://sudak666.github.io/hairdresser-site/">
+<meta property="og:locale" content="uk_UA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Алла та Марина — Перукарі-стилісти">
+<meta name="twitter:description" content="Стрижки, фарбування та укладки з увагою до деталей. Два майстри-стилісти, запис онлайн.">
+<meta name="twitter:image" content="https://sudak666.github.io/hairdresser-site/og-image.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="icon" href="data:,">
+
+<!-- Розмітка для Google (LocalBusiness) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HairSalon",
+  "name": "Алла та Марина — Перукарі-стилісти",
+  "image": "https://sudak666.github.io/hairdresser-site/og-image.png",
+  "url": "https://sudak666.github.io/hairdresser-site/",
+  "priceRange": "від 350 ₴",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "вул. Прикладна, 12",
+    "addressLocality": "Місто",
+    "addressCountry": "UA"
+  },
+  "telephone": "+380000000000",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+    "opens": "09:00",
+    "closes": "19:00"
+  },
+  "sameAs": [
+    "https://instagram.com/your_studio"
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -275,12 +323,23 @@
       <div>
         <p class="eyebrow">Контакти</p>
         <h2>Де знайти</h2>
+        <span class="open-status" id="open-status" hidden></span>
         <ul class="contacts-list">
           <li><b>Адреса:</b> [вул. Прикладна, 12, м. Місто]</li>
           <li><b>Телефон:</b> <a href="tel:+380000000000">+380 00 000 00 00</a></li>
-          <li><b>Instagram:</b> <a href="#" target="_blank" rel="noopener">@your_studio</a></li>
           <li><b>Графік роботи:</b> Пн–Сб, 09:00–19:00</li>
         </ul>
+        <div class="social-links">
+          <a href="#" target="_blank" rel="noopener" aria-label="Instagram" class="social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+          </a>
+          <a href="#" target="_blank" rel="noopener" aria-label="Facebook" class="social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 8h-2a2 2 0 0 0-2 2v2H9v3h2v6h3v-6h2.2l.8-3H14v-1.5c0-.4.3-.5.6-.5H16V8z"/></svg>
+          </a>
+          <a href="#" target="_blank" rel="noopener" aria-label="TikTok" class="social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 4v10.5a2.8 2.8 0 1 1-2-2.7"/><path d="M14 4c.4 2.2 2 4 4.4 4.3"/></svg>
+          </a>
+        </div>
       </div>
       <div class="map ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Карта / фото салону</span></div>
     </div>

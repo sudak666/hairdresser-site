@@ -4,6 +4,19 @@ const VIBER_PHONE = '380000000000'; // номер у форматі 380XXXXXXXXX
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
+// Індикатор "зараз відкрито/закрито" — Пн-Сб, 09:00-19:00 (звір з реальним графіком у розмітці нижче)
+const OPEN_DAYS = [1, 2, 3, 4, 5, 6]; // Пн(1)..Сб(6), 0 = Нд
+const OPEN_HOUR = 9;
+const CLOSE_HOUR = 19;
+const openStatusEl = document.getElementById('open-status');
+if (openStatusEl) {
+  const now = new Date();
+  const isOpenNow = OPEN_DAYS.includes(now.getDay()) && now.getHours() >= OPEN_HOUR && now.getHours() < CLOSE_HOUR;
+  openStatusEl.hidden = false;
+  openStatusEl.classList.add(isOpenNow ? 'is-open' : 'is-closed');
+  openStatusEl.textContent = isOpenNow ? 'Зараз відкрито' : 'Зараз зачинено';
+}
+
 // Бургер-меню
 const burger = document.getElementById('burger');
 const nav = document.getElementById('nav');

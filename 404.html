@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сторінку не знайдено — Алла та Марина</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#b6603f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .notfound{
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:24px;
+  }
+  .notfound-badge{
+    width:88px; height:88px; border-radius:50%;
+    background:linear-gradient(135deg,#c9724d,#9c4e30);
+    color:#faf7f4;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display',serif; font-style:italic; font-size:2.2rem;
+    margin-bottom:28px;
+  }
+  .notfound h1{font-size:clamp(2rem,5vw,3rem); margin-bottom:.4em;}
+  .notfound p{max-width:420px; margin:0 auto 28px;}
+</style>
+</head>
+<body>
+  <div class="notfound">
+    <div class="notfound-badge">AM</div>
+    <h1>Сторінку не знайдено</h1>
+    <p>Схоже, такої сторінки не існує або її було переміщено. Повертайтесь на головну — там усе на місці.</p>
+    <a class="btn btn-primary" href="/hairdresser-site/">На головну</a>
+  </div>
+</body>
+</html>
