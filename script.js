@@ -325,3 +325,24 @@ if (mobileCta && bookingSection && 'IntersectionObserver' in window) {
   }, { threshold: 0.2 });
   ctaObserver.observe(bookingSection);
 }
+
+// Кнопка "нагору" — з'являється після прокрутки, плавно повертає на початок
+const backToTop = document.getElementById('back-to-top');
+if (backToTop) {
+  let ticking = false;
+  function updateBackToTop() {
+    backToTop.classList.toggle('visible', window.scrollY > 600);
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(updateBackToTop);
+      ticking = true;
+    }
+  }, { passive: true });
+  updateBackToTop();
+
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}

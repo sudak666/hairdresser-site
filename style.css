@@ -459,6 +459,26 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
   box-shadow:0 12px 28px -10px rgba(28,26,25,.45);
 }
 
+/* Back to top */
+.back-to-top{
+  position:fixed; right:20px; bottom:20px; z-index:55;
+  width:46px; height:46px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--ink);
+  box-shadow:0 12px 28px -10px rgba(28,26,25,.3);
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(10px);
+  pointer-events:none;
+  transition:opacity .25s ease, transform .25s ease, border-color .2s ease, color .2s ease;
+}
+.back-to-top svg{width:20px; height:20px;}
+.back-to-top.visible{opacity:1; transform:translateY(0); pointer-events:auto;}
+.back-to-top:hover, .back-to-top:active{border-color:var(--accent-soft); color:var(--accent);}
+
 /* Responsive */
 @media (max-width:900px){
   .services-grid{grid-template-columns:1fr;}
@@ -476,7 +496,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline
    breaks .nav's fixed full-screen positioning below, so it must be off
    for exactly as long as the mobile menu is open. */
 body.nav-open .site-header{backdrop-filter:none; background:var(--bg);}
-body.nav-open .mobile-cta{display:none;}
+body.nav-open .mobile-cta, body.nav-open .back-to-top{display:none;}
 
 @media (max-width:720px){
   .nav{
@@ -498,4 +518,5 @@ body.nav-open .mobile-cta{display:none;}
   .mobile-cta{display:block;}
   body{padding-bottom:78px;}
   .site-footer{margin-bottom:0;}
+  .back-to-top{right:16px; bottom:86px; width:42px; height:42px;}
 }
