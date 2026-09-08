@@ -16,6 +16,7 @@ function buildMessage(data) {
     'Запис на прийом:',
     `Ім'я: ${data.name}`,
     `Телефон: ${data.phone}`,
+    `Майстер: ${data.master}`,
     `Послуга: ${data.service}`,
     `Дата: ${data.date}`,
     data.comment ? `Коментар: ${data.comment}` : null,
@@ -30,6 +31,7 @@ function getFormData() {
   return {
     name: fd.get('name')?.toString().trim() || '',
     phone: fd.get('phone')?.toString().trim() || '',
+    master: fd.get('master')?.toString().trim() || '',
     service: fd.get('service')?.toString().trim() || '',
     date: fd.get('date')?.toString().trim() || '',
     comment: fd.get('comment')?.toString().trim() || '',
