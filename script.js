@@ -20,8 +20,12 @@ if (openStatusEl) {
 // Бургер-меню
 const burger = document.getElementById('burger');
 const nav = document.getElementById('nav');
-burger.addEventListener('click', () => nav.classList.toggle('open'));
-nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+function setNavOpen(isOpen) {
+  nav.classList.toggle('open', isOpen);
+  document.body.classList.toggle('nav-open', isOpen);
+}
+burger.addEventListener('click', () => setNavOpen(!nav.classList.contains('open')));
+nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setNavOpen(false)));
 
 // Форма запису -> повідомлення в Telegram
 function buildMessage(data) {
