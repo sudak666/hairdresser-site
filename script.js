@@ -38,8 +38,28 @@ function getFormData() {
   };
 }
 
+// Кастомні select/date поля не беруть участь у нативному required-UI
+// (елемент візуально прихований), тож валідуємо їх окремо перед сабмітом.
+function validateCustomFields() {
+  let firstInvalidTrigger = null;
+  document.querySelectorAll('.custom-select, .custom-date').forEach(wrap => {
+    const native = wrap.querySelector('.cs-native, .cd-native');
+    const trigger = wrap.querySelector('.cs-trigger');
+    const isEmpty = !native.value;
+    wrap.classList.toggle('field-invalid', isEmpty);
+    if (isEmpty && !firstInvalidTrigger) firstInvalidTrigger = trigger;
+  });
+  return firstInvalidTrigger;
+}
+
 form.addEventListener('submit', (e) => {
   e.preventDefault();
+  const firstInvalid = validateCustomFields();
+  if (firstInvalid) {
+    firstInvalid.focus();
+    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
   if (!form.reportValidity()) return;
   const message = buildMessage(getFormData());
   const url = `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(message)}`;
@@ -48,10 +68,196 @@ form.addEventListener('submit', (e) => {
 
 viberFallback.addEventListener('click', (e) => {
   e.preventDefault();
+  const firstInvalid = validateCustomFields();
+  if (firstInvalid) {
+    firstInvalid.focus();
+    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
   if (!form.reportValidity()) return;
   const message = buildMessage(getFormData());
   const url = `viber://chat?number=%2B${VIBER_PHONE}&text=${encodeURIComponent(message)}`;
   window.location.href = url;
+});
+
+// ==== Фірмовий select (заміна системного випадного списку) ====
+function closeAllCustomPanels(except) {
+  document.querySelectorAll('.custom-select, .custom-date').forEach(wrap => {
+    if (wrap === except) return;
+    const trigger = wrap.querySelector('.cs-trigger');
+    const panel = wrap.querySelector('.cs-panel, .cd-panel');
+    if (panel) panel.hidden = true;
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function enhanceCustomSelect(wrap) {
+  const native = wrap.querySelector('.cs-native');
+  const trigger = wrap.querySelector('.cs-trigger');
+  const valueEl = trigger.querySelector('.cs-value');
+  const panel = wrap.querySelector('.cs-panel');
+
+  Array.from(native.options).forEach(opt => {
+    if (!opt.value) return;
+    const li = document.createElement('li');
+    li.setAttribute('role', 'option');
+    li.dataset.value = opt.value;
+    li.textContent = opt.textContent;
+    panel.appendChild(li);
+  });
+  const items = Array.from(panel.querySelectorAll('li'));
+
+  function selectValue(value, label) {
+    native.value = value;
+    valueEl.textContent = label;
+    trigger.classList.add('has-value');
+    items.forEach(li => li.classList.toggle('cs-selected', li.dataset.value === value));
+    wrap.classList.remove('field-invalid');
+    native.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function open() {
+    closeAllCustomPanels(wrap);
+    panel.hidden = false;
+    trigger.setAttribute('aria-expanded', 'true');
+  }
+  function close() {
+    panel.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+    items.forEach(li => li.classList.remove('cs-active'));
+  }
+
+  trigger.addEventListener('click', () => (panel.hidden ? open() : close()));
+
+  panel.addEventListener('click', (e) => {
+    const li = e.target.closest('li');
+    if (!li) return;
+    selectValue(li.dataset.value, li.textContent);
+    close();
+  });
+
+  trigger.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (panel.hidden) { open(); return; }
+      let idx = items.findIndex(li => li.classList.contains('cs-active'));
+      idx = e.key === 'ArrowDown' ? Math.min(idx + 1, items.length - 1) : Math.max(idx - 1, 0);
+      items.forEach(li => li.classList.remove('cs-active'));
+      if (items[idx]) { items[idx].classList.add('cs-active'); items[idx].scrollIntoView({ block: 'nearest' }); }
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (panel.hidden) { open(); return; }
+      const active = items.find(li => li.classList.contains('cs-active')) || items[0];
+      if (active) { selectValue(active.dataset.value, active.textContent); close(); }
+    } else if (e.key === 'Escape') {
+      close();
+    }
+  });
+}
+
+document.querySelectorAll('.custom-select').forEach(enhanceCustomSelect);
+
+// ==== Фірмовий календар (заміна системного датапікера) ====
+function enhanceCustomDate(wrap) {
+  const native = wrap.querySelector('.cd-native');
+  const trigger = wrap.querySelector('.cs-trigger');
+  const valueEl = trigger.querySelector('.cs-value');
+  const panel = wrap.querySelector('.cd-panel');
+  const monthLabel = panel.querySelector('.cd-month-label');
+  const grid = panel.querySelector('.cd-grid');
+  const prevBtn = panel.querySelector('.cd-nav[data-dir="-1"]');
+  const nextBtn = panel.querySelector('.cd-nav[data-dir="1"]');
+
+  const MONTHS_GEN = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+  const MONTHS_NOM = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let viewYear = today.getFullYear();
+  let viewMonth = today.getMonth();
+  let selected = null;
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const displayLabel = (d) => `${d.getDate()} ${MONTHS_GEN[d.getMonth()]} ${d.getFullYear()}`;
+
+  function render() {
+    monthLabel.textContent = `${MONTHS_NOM[viewMonth]} ${viewYear}`;
+    grid.innerHTML = '';
+
+    const firstOfMonth = new Date(viewYear, viewMonth, 1);
+    let startOffset = firstOfMonth.getDay() - 1;
+    if (startOffset < 0) startOffset = 6;
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+    for (let i = 0; i < startOffset; i++) {
+      const empty = document.createElement('span');
+      empty.className = 'cd-day cd-empty';
+      grid.appendChild(empty);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const d = new Date(viewYear, viewMonth, day);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cd-day';
+      btn.textContent = String(day);
+      if (d < today) btn.disabled = true;
+      if (d.getTime() === today.getTime()) btn.classList.add('cd-today');
+      if (selected && d.getTime() === selected.getTime()) btn.classList.add('cd-selected');
+      btn.addEventListener('click', () => {
+        selected = d;
+        native.value = iso(d);
+        valueEl.textContent = displayLabel(d);
+        trigger.classList.add('has-value');
+        wrap.classList.remove('field-invalid');
+        native.dispatchEvent(new Event('change', { bubbles: true }));
+        close();
+      });
+      grid.appendChild(btn);
+    }
+
+    prevBtn.disabled = viewYear === today.getFullYear() && viewMonth === today.getMonth();
+  }
+
+  function open() {
+    closeAllCustomPanels(wrap);
+    panel.hidden = false;
+    trigger.setAttribute('aria-expanded', 'true');
+    render();
+  }
+  function close() {
+    panel.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+
+  trigger.addEventListener('click', () => (panel.hidden ? open() : close()));
+  prevBtn.addEventListener('click', () => {
+    viewMonth--;
+    if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    render();
+  });
+  nextBtn.addEventListener('click', () => {
+    viewMonth++;
+    if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    render();
+  });
+  trigger.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); panel.hidden ? open() : close(); }
+    else if (e.key === 'Escape') close();
+  });
+
+  render();
+}
+
+document.querySelectorAll('.custom-date').forEach(enhanceCustomDate);
+
+// Закриття кастомних панелей по кліку поза ними / Escape
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.custom-select, .custom-date')) closeAllCustomPanels();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeAllCustomPanels();
 });
 
 // Scroll-reveal для карток/секцій

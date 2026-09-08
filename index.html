@@ -195,31 +195,66 @@
         <div class="form-row">
           <label>
             Майстер
-            <select name="master" required>
-              <option value="" disabled selected>Оберіть майстра</option>
-              <option>Алла А.</option>
-              <option>Марина М.</option>
-              <option>Без різниці</option>
-            </select>
+            <div class="custom-select" data-placeholder="Оберіть майстра">
+              <select class="cs-native" name="master" tabindex="-1" aria-hidden="true">
+                <option value="" disabled selected>Оберіть майстра</option>
+                <option>Алла А.</option>
+                <option>Марина М.</option>
+                <option>Без різниці</option>
+              </select>
+              <button type="button" class="cs-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <span class="cs-value">Оберіть майстра</span>
+                <svg class="cs-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <ul class="cs-panel" role="listbox" hidden></ul>
+            </div>
           </label>
           <label>
             Послуга
-            <select name="service" required>
-              <option value="" disabled selected>Оберіть послугу</option>
-              <option>Жіноча стрижка</option>
-              <option>Чоловіча стрижка</option>
-              <option>Фарбування</option>
-              <option>Мелірування / Балаяж</option>
-              <option>Укладка</option>
-              <option>Кератинове випрямлення</option>
-              <option>Інше (вкажу в коментарі)</option>
-            </select>
+            <div class="custom-select" data-placeholder="Оберіть послугу">
+              <select class="cs-native" name="service" tabindex="-1" aria-hidden="true">
+                <option value="" disabled selected>Оберіть послугу</option>
+                <option>Жіноча стрижка</option>
+                <option>Чоловіча стрижка</option>
+                <option>Фарбування</option>
+                <option>Мелірування / Балаяж</option>
+                <option>Укладка</option>
+                <option>Кератинове випрямлення</option>
+                <option>Інше (вкажу в коментарі)</option>
+              </select>
+              <button type="button" class="cs-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <span class="cs-value">Оберіть послугу</span>
+                <svg class="cs-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <ul class="cs-panel" role="listbox" hidden></ul>
+            </div>
           </label>
         </div>
 
         <label>
           Бажана дата
-          <input type="date" name="date" required>
+          <div class="custom-date">
+            <input type="text" class="cd-native" name="date" tabindex="-1" aria-hidden="true" autocomplete="off">
+            <button type="button" class="cs-trigger" aria-haspopup="dialog" aria-expanded="false">
+              <span class="cs-value">Оберіть дату</span>
+              <svg class="cs-caret cd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 3v3M16 3v3"/></svg>
+            </button>
+            <div class="cd-panel" role="dialog" aria-label="Вибір дати" hidden>
+              <div class="cd-head">
+                <button type="button" class="cd-nav" data-dir="-1" aria-label="Попередній місяць">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+                </button>
+                <span class="cd-month-label"></span>
+                <button type="button" class="cd-nav" data-dir="1" aria-label="Наступний місяць">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+                </button>
+              </div>
+              <div class="cd-weekdays">
+                <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Нд</span>
+              </div>
+              <div class="cd-grid"></div>
+            </div>
+          </div>
         </label>
 
         <label>
