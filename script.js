@@ -53,3 +53,52 @@ viberFallback.addEventListener('click', (e) => {
   const url = `viber://chat?number=%2B${VIBER_PHONE}&text=${encodeURIComponent(message)}`;
   window.location.href = url;
 });
+
+// Scroll-reveal для карток/секцій
+const revealTargets = document.querySelectorAll(
+  '.service-group, .gallery-item, .team-card, .review-card'
+);
+revealTargets.forEach(el => el.classList.add('reveal'));
+
+if ('IntersectionObserver' in window) {
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  revealTargets.forEach(el => revealObserver.observe(el));
+} else {
+  revealTargets.forEach(el => el.classList.add('in-view'));
+}
+
+// Активний пункт навігації при скролі
+const navLinks = Array.from(nav.querySelectorAll('a[href^="#"]'));
+const navSections = navLinks
+  .map(a => document.querySelector(a.getAttribute('href')))
+  .filter(Boolean);
+
+if ('IntersectionObserver' in window && navSections.length) {
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const id = `#${entry.target.id}`;
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  navSections.forEach(sec => navObserver.observe(sec));
+}
+
+// Ховаємо плаваючу кнопку запису, коли форма вже видно
+const mobileCta = document.querySelector('.mobile-cta');
+const bookingSection = document.getElementById('booking');
+if (mobileCta && bookingSection && 'IntersectionObserver' in window) {
+  const ctaObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      mobileCta.style.display = entry.isIntersecting ? 'none' : '';
+    });
+  }, { threshold: 0.2 });
+  ctaObserver.observe(bookingSection);
+}
