@@ -346,3 +346,18 @@ if (backToTop) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }
+
+// Магнітні кнопки — тягнуться до курсора (тільше десктоп, точний вказівник)
+if (window.matchMedia('(pointer: fine)').matches) {
+  document.querySelectorAll('.btn-primary').forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+      const r = btn.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width / 2) * 0.25;
+      const y = (e.clientY - r.top - r.height / 2) * 0.25;
+      btn.style.transform = `translate(${x}px, ${y}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+    });
+  });
+}
