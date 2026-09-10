@@ -261,15 +261,6 @@ img{max-width:100%; display:block;}
   margin-bottom:16px;
   border-bottom:2px dashed var(--line);
 }
-.service-group h3::before,.service-group h3::after{
-  content:"";
-  position:absolute; bottom:-7px;
-  width:14px; height:14px; border-radius:50%;
-  background:var(--bg);
-  border:2px solid var(--ink);
-}
-.service-group h3::before{left:-28px;}
-.service-group h3::after{right:-28px;}
 .price-list li{
   display:flex; justify-content:space-between; align-items:baseline;
   gap:12px;
