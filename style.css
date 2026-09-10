@@ -154,11 +154,15 @@ img{max-width:100%; display:block;}
   );
   border-radius:50%;
   opacity:.9;
-  transform:rotate(8deg);
   pointer-events:none;
   z-index:0;
   mask-image:radial-gradient(circle, #000 62%, transparent 75%);
   -webkit-mask-image:radial-gradient(circle, #000 62%, transparent 75%);
+  animation:barber-spin 14s linear infinite;
+}
+@keyframes barber-spin{to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion:reduce){
+  .hero-glow{animation:none;}
 }
 .hero-inner{max-width:760px; position:relative; z-index:1;}
 .lead{font-size:1.15rem; max-width:560px;}
@@ -202,7 +206,31 @@ img{max-width:100%; display:block;}
 }
 
 /* Sections */
-.section{padding:88px 0;}
+.section{padding:88px 0; position:relative;}
+
+/* Floating decorative doodles — little bits of motion scattered down the page */
+.doodle{
+  position:absolute;
+  width:40px; height:40px;
+  color:var(--accent2);
+  opacity:.4;
+  pointer-events:none;
+  z-index:0;
+  animation:doodle-float 6.5s ease-in-out infinite;
+}
+.doodle.d-accent{color:var(--accent);}
+.doodle.d-2{animation-delay:-2.2s;}
+.doodle.d-3{animation-delay:-4.3s;}
+@keyframes doodle-float{
+  0%,100%{transform:translateY(0) rotate(-8deg);}
+  50%{transform:translateY(-16px) rotate(8deg);}
+}
+@media (prefers-reduced-motion:reduce){
+  .doodle{animation:none;}
+}
+@media (max-width:720px){
+  .doodle{display:none;}
+}
 .section.alt{background:var(--bg-alt);}
 .section h2.center{margin-bottom:48px;}
 
@@ -317,6 +345,15 @@ img{max-width:100%; display:block;}
   background:rgba(240,200,105,.75);
   border:1px solid rgba(34,69,47,.25);
   transform:translateX(-50%) rotate(-3deg);
+  animation:tape-sway 4.5s ease-in-out infinite;
+  transform-origin:top center;
+}
+@keyframes tape-sway{
+  0%,100%{transform:translateX(-50%) rotate(-3deg);}
+  50%{transform:translateX(-50%) rotate(3deg);}
+}
+@media (prefers-reduced-motion:reduce){
+  .team-photo::after{animation:none;}
 }
 .team-text h3{
   font-family:'Caveat',cursive;
