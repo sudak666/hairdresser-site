@@ -191,7 +191,7 @@ img{max-width:100%; display:block;}
   gap:16px;
   white-space:nowrap;
   width:max-content;
-  animation:marquee-scroll 22s linear infinite;
+  animation:marquee-scroll 176s linear infinite;
 }
 .marquee-track span{
   font-family:'Space Grotesk',sans-serif;
