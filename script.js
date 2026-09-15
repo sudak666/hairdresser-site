@@ -279,7 +279,7 @@ document.addEventListener('keydown', (e) => {
 
 // Scroll-reveal для карток/секцій
 const revealTargets = document.querySelectorAll(
-  '.service-group, .gallery-item, .team-card, .review-card'
+  '.service-group, .master-profile, .work-story'
 );
 revealTargets.forEach(el => el.classList.add('reveal'));
 
@@ -347,17 +347,28 @@ if (backToTop) {
   });
 }
 
-// Магнітні кнопки — тягнуться до курсора (тільше десктоп, точний вказівник)
-if (window.matchMedia('(pointer: fine)').matches) {
-  document.querySelectorAll('.btn-primary').forEach(btn => {
-    btn.addEventListener('mousemove', (e) => {
-      const r = btn.getBoundingClientRect();
-      const x = (e.clientX - r.left - r.width / 2) * 0.25;
-      const y = (e.clientY - r.top - r.height / 2) * 0.25;
-      btn.style.transform = `translate(${x}px, ${y}px)`;
-    });
-    btn.addEventListener('mouseleave', () => {
-      btn.style.transform = '';
-    });
+
+// Booking links carry only confirmed names and service categories.
+function setBookingChoice(name, value) {
+  const native = form.elements.namedItem(name);
+  if (!native || !Array.from(native.options).some(option => option.value === value)) return;
+  native.value = value;
+  const wrap = native.closest('.custom-select');
+  const trigger = wrap.querySelector('.cs-trigger');
+  trigger.querySelector('.cs-value').textContent = native.selectedOptions[0].textContent;
+  trigger.classList.add('has-value');
+  wrap.classList.remove('field-invalid');
+  wrap.querySelectorAll('[role="option"]').forEach(item => {
+    const selected = item.dataset.value === value;
+    item.classList.toggle('cs-selected', selected);
+    item.setAttribute('aria-selected', String(selected));
   });
+  native.dispatchEvent(new Event('change', { bubbles: true }));
 }
+document.querySelectorAll('a[data-master], a[data-service]').forEach(link => {
+  link.addEventListener('click', () => {
+    closeAllCustomPanels();
+    if (link.dataset.master) setBookingChoice('master', link.dataset.master);
+    if (link.dataset.service) setBookingChoice('service', link.dataset.service);
+  });
+});
