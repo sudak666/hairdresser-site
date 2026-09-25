@@ -1,6 +1,8 @@
 // ==== НАЛАШТУВАННЯ ЗАПИСУ (заповни своїми даними) ====
 const TELEGRAM_USERNAME = 'your_telegram_username'; // без @, напр. 'olga_hair'
 const VIBER_PHONE = '380000000000'; // номер у форматі 380XXXXXXXXX, без +
+// Демо: замість переходу в месенджер показує готове повідомлення. Вимкни після заповнення контактів.
+const DEMO_MODE = true;
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -62,7 +64,7 @@ function buildMessage(data) {
     `Телефон: ${data.phone}`,
     `Майстер: ${data.master}`,
     `Послуга: ${data.service}`,
-    `Дата: ${data.date}`,
+    `Дата: ${data.date.split('-').reverse().join('.')}`,
     data.comment ? `Коментар: ${data.comment}` : null,
   ].filter(Boolean).join('\n');
 }
@@ -72,6 +74,12 @@ const formStatus = document.getElementById('form-status');
 function setStatus(text, isError = false) {
   formStatus.textContent = text;
   formStatus.classList.toggle('is-error', isError);
+}
+function showDemoPreview(channel, message) {
+  const pre = document.createElement('pre');
+  pre.textContent = message;
+  formStatus.classList.remove('is-error');
+  formStatus.replaceChildren(`Демо: у робочій версії відкриється ${channel} з таким повідомленням:`, pre);
 }
 function validateForm() {
   form.classList.add('submitted');
@@ -118,6 +126,7 @@ form.addEventListener('submit', (e) => {
   e.preventDefault();
   if (!validateForm()) return;
   const message = buildMessage(getFormData());
+  if (DEMO_MODE) { showDemoPreview('Telegram', message); return; }
   const url = `https://t.me/${encodeURIComponent(TELEGRAM_USERNAME)}?text=${encodeURIComponent(message)}`;
   window.open(url, '_blank', 'noopener');
   setStatus('Telegram відкрито — залишилось натиснути «Надіслати». Не відкрився? Зателефонуйте нам.');
@@ -127,6 +136,7 @@ viberFallback.addEventListener('click', (e) => {
   e.preventDefault();
   if (!validateForm()) return;
   const message = buildMessage(getFormData());
+  if (DEMO_MODE) { showDemoPreview('Viber', message); return; }
   window.location.href = `viber://chat?number=%2B${VIBER_PHONE}&text=${encodeURIComponent(message)}`;
   setStatus('Відкриваємо Viber… Якщо не встановлено — зателефонуйте нам.');
 });
