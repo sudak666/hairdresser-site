@@ -23,9 +23,36 @@ const nav = document.getElementById('nav');
 function setNavOpen(isOpen) {
   nav.classList.toggle('open', isOpen);
   document.body.classList.toggle('nav-open', isOpen);
+  burger.setAttribute('aria-expanded', String(isOpen));
 }
 burger.addEventListener('click', () => setNavOpen(!nav.classList.contains('open')));
 nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setNavOpen(false)));
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && nav.classList.contains('open')) { setNavOpen(false); burger.focus(); }
+});
+matchMedia('(min-width: 881px)').addEventListener('change', (e) => { if (e.matches) setNavOpen(false); });
+
+// Тема: системна за замовчуванням, ручний вибір запам'ятовується
+const themeToggle = document.getElementById('theme-toggle');
+const darkMq = matchMedia('(prefers-color-scheme: dark)');
+const isDark = () => (document.documentElement.dataset.theme || (darkMq.matches ? 'dark' : 'light')) === 'dark';
+const syncThemeUi = () => themeToggle.setAttribute('aria-pressed', String(isDark()));
+themeToggle.addEventListener('click', () => {
+  const next = isDark() ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem('theme', next); } catch {}
+  syncThemeUi();
+});
+darkMq.addEventListener('change', syncThemeUi);
+syncThemeUi();
+
+// Порівняння до/після
+document.querySelectorAll('.compare').forEach(box => {
+  const range = box.querySelector('.compare-range');
+  const update = () => box.style.setProperty('--pos', `${range.value}%`);
+  range.addEventListener('input', update);
+  update();
+});
 
 // Форма запису -> повідомлення в Telegram
 function buildMessage(data) {
@@ -41,6 +68,24 @@ function buildMessage(data) {
 }
 
 const form = document.getElementById('booking-form');
+const formStatus = document.getElementById('form-status');
+function setStatus(text, isError = false) {
+  formStatus.textContent = text;
+  formStatus.classList.toggle('is-error', isError);
+}
+function validateForm() {
+  form.classList.add('submitted');
+  const firstInvalid = validateCustomFields();
+  const nativeInvalid = form.querySelector('input:invalid, textarea:invalid');
+  if (nativeInvalid) { nativeInvalid.focus(); setStatus('Перевірте ім’я та телефон.', true); return false; }
+  if (firstInvalid) {
+    firstInvalid.focus();
+    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setStatus('Оберіть майстриню, послугу й дату.', true);
+    return false;
+  }
+  return true;
+}
 const viberFallback = document.getElementById('viber-fallback');
 
 function getFormData() {
@@ -71,30 +116,19 @@ function validateCustomFields() {
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  const firstInvalid = validateCustomFields();
-  if (firstInvalid) {
-    firstInvalid.focus();
-    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-  if (!form.reportValidity()) return;
+  if (!validateForm()) return;
   const message = buildMessage(getFormData());
-  const url = `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(message)}`;
+  const url = `https://t.me/${encodeURIComponent(TELEGRAM_USERNAME)}?text=${encodeURIComponent(message)}`;
   window.open(url, '_blank', 'noopener');
+  setStatus('Telegram відкрито — залишилось натиснути «Надіслати». Не відкрився? Зателефонуйте нам.');
 });
 
 viberFallback.addEventListener('click', (e) => {
   e.preventDefault();
-  const firstInvalid = validateCustomFields();
-  if (firstInvalid) {
-    firstInvalid.focus();
-    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-  if (!form.reportValidity()) return;
+  if (!validateForm()) return;
   const message = buildMessage(getFormData());
-  const url = `viber://chat?number=%2B${VIBER_PHONE}&text=${encodeURIComponent(message)}`;
-  window.location.href = url;
+  window.location.href = `viber://chat?number=%2B${VIBER_PHONE}&text=${encodeURIComponent(message)}`;
+  setStatus('Відкриваємо Viber… Якщо не встановлено — зателефонуйте нам.');
 });
 
 // ==== Фірмовий select (заміна системного випадного списку) ====
@@ -114,10 +148,12 @@ function enhanceCustomSelect(wrap) {
   const valueEl = trigger.querySelector('.cs-value');
   const panel = wrap.querySelector('.cs-panel');
 
-  Array.from(native.options).forEach(opt => {
+  Array.from(native.options).forEach((opt, i) => {
     if (!opt.value) return;
     const li = document.createElement('li');
     li.setAttribute('role', 'option');
+    li.setAttribute('aria-selected', 'false');
+    li.id = `${native.name}-opt-${i}`;
     li.dataset.value = opt.value;
     li.textContent = opt.textContent;
     panel.appendChild(li);
@@ -128,7 +164,11 @@ function enhanceCustomSelect(wrap) {
     native.value = value;
     valueEl.textContent = label;
     trigger.classList.add('has-value');
-    items.forEach(li => li.classList.toggle('cs-selected', li.dataset.value === value));
+    items.forEach(li => {
+      const on = li.dataset.value === value;
+      li.classList.toggle('cs-selected', on);
+      li.setAttribute('aria-selected', String(on));
+    });
     wrap.classList.remove('field-invalid');
     native.dispatchEvent(new Event('change', { bubbles: true }));
   }
@@ -142,6 +182,7 @@ function enhanceCustomSelect(wrap) {
     panel.hidden = true;
     trigger.setAttribute('aria-expanded', 'false');
     items.forEach(li => li.classList.remove('cs-active'));
+    trigger.removeAttribute('aria-activedescendant');
   }
 
   trigger.addEventListener('click', () => (panel.hidden ? open() : close()));
@@ -160,7 +201,11 @@ function enhanceCustomSelect(wrap) {
       let idx = items.findIndex(li => li.classList.contains('cs-active'));
       idx = e.key === 'ArrowDown' ? Math.min(idx + 1, items.length - 1) : Math.max(idx - 1, 0);
       items.forEach(li => li.classList.remove('cs-active'));
-      if (items[idx]) { items[idx].classList.add('cs-active'); items[idx].scrollIntoView({ block: 'nearest' }); }
+      if (items[idx]) {
+        items[idx].classList.add('cs-active');
+        items[idx].scrollIntoView({ block: 'nearest' });
+        trigger.setAttribute('aria-activedescendant', items[idx].id);
+      }
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       if (panel.hidden) { open(); return; }
@@ -200,7 +245,7 @@ function enhanceCustomDate(wrap) {
 
   function render() {
     monthLabel.textContent = `${MONTHS_NOM[viewMonth]} ${viewYear}`;
-    grid.innerHTML = '';
+    grid.replaceChildren();
 
     const firstOfMonth = new Date(viewYear, viewMonth, 1);
     let startOffset = firstOfMonth.getDay() - 1;
@@ -219,6 +264,7 @@ function enhanceCustomDate(wrap) {
       btn.type = 'button';
       btn.className = 'cd-day';
       btn.textContent = String(day);
+      btn.setAttribute('aria-label', displayLabel(d));
       if (d < today) btn.disabled = true;
       if (d.getTime() === today.getTime()) btn.classList.add('cd-today');
       if (selected && d.getTime() === selected.getTime()) btn.classList.add('cd-selected');
@@ -278,12 +324,11 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Scroll-reveal для карток/секцій
-const revealTargets = document.querySelectorAll(
-  '.service-group, .master-profile, .work-story'
-);
-revealTargets.forEach(el => el.classList.add('reveal'));
+const revealTargets = document.querySelectorAll('.reveal');
 
-if ('IntersectionObserver' in window) {
+if (CSS.supports('animation-timeline: view()')) {
+  // CSS scroll-driven animations handle reveal
+} else if ('IntersectionObserver' in window) {
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -320,7 +365,7 @@ const bookingSection = document.getElementById('booking');
 if (mobileCta && bookingSection && 'IntersectionObserver' in window) {
   const ctaObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      mobileCta.style.display = entry.isIntersecting ? 'none' : '';
+      mobileCta.classList.toggle('hidden', entry.isIntersecting);
     });
   }, { threshold: 0.2 });
   ctaObserver.observe(bookingSection);
@@ -330,8 +375,10 @@ if (mobileCta && bookingSection && 'IntersectionObserver' in window) {
 const backToTop = document.getElementById('back-to-top');
 if (backToTop) {
   let ticking = false;
+  const header = document.querySelector('.site-header');
   function updateBackToTop() {
     backToTop.classList.toggle('visible', window.scrollY > 600);
+    header.classList.toggle('scrolled', window.scrollY > 8);
     ticking = false;
   }
   window.addEventListener('scroll', () => {

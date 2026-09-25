@@ -5,36 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Сторінку не знайдено — Валентина та Алла</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#c1531f">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<style>
-  .notfound{
-    min-height:100vh;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center;
-    padding:24px;
-  }
-  .notfound-badge{
-    width:88px; height:88px; border-radius:50%;
-    background:linear-gradient(135deg,#c1531f,#22452f);
-    color:#f6efdc;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Fraunces',serif; font-style:italic; font-size:2.2rem;
-    margin-bottom:28px;
-  }
-  .notfound h1{font-size:clamp(2rem,5vw,3rem); margin-bottom:.4em;}
-  .notfound p{max-width:420px; margin:0 auto 28px;}
-</style>
+<meta name="theme-color" content="#f3eee4">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/hairdresser-site/style.css">
+<script src="/hairdresser-site/theme.js"></script>
 </head>
 <body>
-  <div class="notfound">
-    <div class="notfound-badge">ВА</div>
-    <h1>Сторінку не знайдено</h1>
-    <p>Схоже, такої сторінки не існує або її було переміщено. Повертайтесь на головну — там усе на місці.</p>
-    <a class="btn btn-primary" href="/hairdresser-site/">На головну</a>
-  </div>
+  <main class="wrap notfound">
+    <p class="index">404</p>
+    <h1 class="hero-title"><span class="line">Цю пасму</span><span class="line"><em>ми загубили.</em></span></h1>
+    <p class="lead">Сторінки не існує або її перемістили. На головній усе на місці.</p>
+    <div class="hero-actions"><a class="btn btn-primary" href="/hairdresser-site/">На головну <span aria-hidden="true">→</span></a></div>
+  </main>
 </body>
 </html>
