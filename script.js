@@ -48,13 +48,6 @@ themeToggle.addEventListener('click', () => {
 darkMq.addEventListener('change', syncThemeUi);
 syncThemeUi();
 
-// Порівняння до/після
-document.querySelectorAll('.compare').forEach(box => {
-  const range = box.querySelector('.compare-range');
-  const update = () => box.style.setProperty('--pos', `${range.value}%`);
-  range.addEventListener('input', update);
-  update();
-});
 
 // Форма запису -> повідомлення в Telegram
 function buildMessage(data) {
