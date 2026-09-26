@@ -176,25 +176,17 @@ p{margin:0;text-wrap:pretty}
 .tags{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:4px 0 10px}
 .tags li{padding:6px 12px;border-radius:999px;border:1px dashed var(--line);font-size:var(--step--1);color:var(--muted)}
 
-/* Stories + compare */
+/* Stories */
 .stories{background:var(--paper-2)}
-.story-list{display:grid;gap:clamp(48px,7vw,96px)}
-.story{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(24px,4vw,64px);align-items:center}
-.story:nth-child(even){grid-template-columns:1fr 1.25fr}
-.story:nth-child(even) .compare{order:2}
-.compare{--pos:50%;position:relative;aspect-ratio:4/3;border-radius:var(--r);overflow:hidden;background:var(--surface);user-select:none;touch-action:pan-y}
-.compare>div{position:absolute;inset:0;display:flex;align-items:flex-end;padding:18px}
-.compare-before{background:repeating-linear-gradient(135deg,var(--paper) 0 14px,var(--paper-2) 14px 28px)}
-.compare-after{background:linear-gradient(135deg,color-mix(in oklab,var(--dye) 70%,var(--paper)),color-mix(in oklab,var(--dye-2) 70%,var(--paper)));clip-path:inset(0 0 0 var(--pos));justify-content:flex-end}
-.compare>div span{font:600 var(--step--1)/1 var(--f-display);padding:8px 14px;border-radius:999px;background:var(--ink);color:var(--paper)}
-.compare::after{content:"";position:absolute;top:0;bottom:0;left:var(--pos);width:2px;margin-left:-1px;background:var(--paper);pointer-events:none;box-shadow:0 0 0 1px color-mix(in oklab,var(--ink) 20%,transparent)}
-.compare::before{content:"⟷";position:absolute;z-index:2;top:50%;left:var(--pos);translate:-50% -50%;width:48px;height:48px;border-radius:50%;background:var(--paper);color:var(--ink);display:grid;place-items:center;font-size:1.2rem;pointer-events:none;box-shadow:0 8px 24px -8px rgb(0 0 0/.35)}
-.compare-range{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;z-index:3}
-.compare:has(.compare-range:focus-visible){outline:3px solid var(--focus);outline-offset:4px}
+.story-list{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,28px)}
+.story{display:flex;padding:clamp(24px,2.6vw,36px);border-radius:var(--r);background:var(--surface);border:1px solid var(--line);transition:transform .5s var(--ease),border-color .3s}
+.story:hover{transform:translateY(-6px);border-color:var(--dye)}
+.story-copy{display:flex;flex-direction:column;width:100%}
+.story .text-link{margin-top:auto;align-self:flex-start}
 .kicker{font:600 var(--step--1)/1 var(--f-display);color:var(--dye);margin-bottom:14px}
-.story-copy h3{font-size:var(--step-2)}
+.story-copy h3{font-size:var(--step-1)}
 .story-copy dl{margin:24px 0 28px;display:grid;gap:0}
-.story-copy dl div{display:grid;grid-template-columns:9em 1fr;gap:16px;padding-block:12px;border-top:1px solid var(--line)}
+.story-copy dl div{display:grid;grid-template-columns:1fr;gap:4px;padding-block:12px;border-top:1px solid var(--line)}
 .story-copy dt{font-weight:600}
 .story-copy dd{margin:0;color:var(--ink-2)}
 
@@ -303,6 +295,8 @@ input:focus-visible,textarea:focus-visible,.cs-trigger:focus-visible{outline:non
 
 /* Responsive */
 @media (max-width:1024px){
+  .story-list{grid-template-columns:1fr 1fr}
+  .story:last-child{grid-column:1/-1}
   .menu-grid{grid-template-columns:1fr 1fr}
   .menu-group:last-child{grid-column:1/-1}
 }
@@ -317,8 +311,7 @@ input:focus-visible,textarea:focus-visible,.cs-trigger:focus-visible{outline:non
   .header-tools .btn-small{display:none}
   .burger{display:grid}
   body.nav-open{overflow:hidden}
-  .hero-grid,.booking-grid,.contacts-grid,.story,.story:nth-child(even){grid-template-columns:1fr}
-  .story:nth-child(even) .compare{order:0}
+  .hero-grid,.booking-grid,.contacts-grid{grid-template-columns:1fr}
   .hero-visual{max-width:520px;width:100%;margin-inline:auto}
   .booking-intro{position:static}
   .masters{grid-template-columns:1fr}
@@ -331,6 +324,8 @@ input:focus-visible,textarea:focus-visible,.cs-trigger:focus-visible{outline:non
   .back-to-top{bottom:max(16px,env(safe-area-inset-bottom))}
 }
 @media (max-width:600px){
+  .story-list{grid-template-columns:1fr}
+  .story:last-child{grid-column:auto}
   .logo-text{display:none}
   .form-row,.menu-grid{grid-template-columns:1fr}
   .story-copy dl div,.contacts-list div{grid-template-columns:1fr;gap:4px}
@@ -345,8 +340,6 @@ input:focus-visible,textarea:focus-visible,.cs-trigger:focus-visible{outline:non
 /* Demo content */
 .demo-bar{margin:0;padding:6px var(--gutter);text-align:center;font-size:.78rem;letter-spacing:.02em;background:var(--ink);color:color-mix(in oklab,var(--paper) 75%,transparent)}
 .demo-bar b{color:var(--dye);font-weight:600}
-.compare img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.compare>div span{position:relative}
 .master-body>p:not(.role){max-width:46ch;color:var(--ink-2)}
 .tags li{border-style:solid;color:var(--ink-2)}
 .reviews{list-style:none;padding:0;margin:56px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,28px);text-align:left}
